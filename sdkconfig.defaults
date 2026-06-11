@@ -1,0 +1,45 @@
+# ------------------------------------------------------------------
+# Project-wide ESP-IDF config overrides (generic ESP32, 4 MB, no PSRAM).
+# Edit menuconfig if you need more; this file just nails the must-haves.
+#
+# Diff vs the 13.3" sibling: PSRAM block removed (this board has none),
+# flash dropped 16 MB -> 4 MB, OPI flash settings gone. mbedTLS + MQTT
+# 3.1.1 + lwIP SNTP defaults are kept identical.
+# ------------------------------------------------------------------
+
+# --- Flash (generic ESP32 dev board, 4 MB quad) ---
+CONFIG_ESPTOOLPY_FLASHSIZE_4MB=y
+CONFIG_ESPTOOLPY_FLASHSIZE="4MB"
+CONFIG_PARTITION_TABLE_CUSTOM=y
+CONFIG_PARTITION_TABLE_CUSTOM_FILENAME="partitions.csv"
+
+# --- CPU ---
+CONFIG_ESP_DEFAULT_CPU_FREQ_MHZ_240=y
+CONFIG_FREERTOS_HZ=1000
+
+# --- Networking ---
+CONFIG_LWIP_LOCAL_HOSTNAME="tesserae-esp32"
+
+# WiFi: STA + AP simultaneously (we need AP during provisioning)
+CONFIG_ESP_WIFI_ENABLE_WPA3_SAE=y
+
+# --- TLS / HTTPS via mbedTLS bundled root CAs ---
+# Lets esp_http_client + esp-tls validate arbitrary public HTTPS endpoints
+# without us embedding any certs.
+CONFIG_ESP_TLS_USING_MBEDTLS=y
+CONFIG_MBEDTLS_CERTIFICATE_BUNDLE=y
+CONFIG_MBEDTLS_CERTIFICATE_BUNDLE_DEFAULT_FULL=y
+
+# --- MQTT (5 is overkill for our use case; 3.1.1 is rock solid) ---
+CONFIG_MQTT_PROTOCOL_311=y
+
+# --- HTTP server (for SoftAP captive portal) ---
+CONFIG_HTTPD_MAX_REQ_HDR_LEN=1024
+CONFIG_HTTPD_MAX_URI_LEN=512
+
+# --- Logging ---
+CONFIG_LOG_DEFAULT_LEVEL_INFO=y
+CONFIG_LOG_COLORS=y
+
+# --- Power: we want explicit control, not the IDF power-management hooks ---
+CONFIG_PM_ENABLE=n
