@@ -254,4 +254,6 @@ The wake state machine, captive-portal provisioning, NVS schema, smart-sync cont
 
 ## License
 
-MIT — see [LICENSE](LICENSE).
+
+AGPL-3.0-or-later. See [LICENSE](LICENSE).
+
